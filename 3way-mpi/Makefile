@@ -11,26 +11,42 @@
 # -I and -L for MPI stuff is not necessary
 #
 
-CC        = mpicc
+#CC        = mpicc
 
 #
 # Modify TOPDIR if you use your own include files and library files
 #
 
-PROGRAM   = hello			# name of the binary
-SRCS      = MPI_C_SAMPLE.c		# source file
-OBJS      = $(SRCS:.c=.o)		# object file
+#PROGRAM   = hello			# name of the binary
+#SRCS      = MPI_C_SAMPLE.c		# source file
+#OBJS      = $(SRCS:.c=.o)		# object file
 
 #
 # Targets
 #
 
-default: all
+#default: all
 
-all: $(PROGRAM) 
+#all: $(PROGRAM) 
 
-$(PROGRAM): $(OBJS)
-	$(CC) $(OBJS) -o $(PROGRAM) $(LDFLAGS)
+#$(PROGRAM): $(OBJS)
+#	$(CC) $(OBJS) -o $(PROGRAM) $(LDFLAGS)
+
+#clean:
+#	/bin/rm -f $(OBJS) $(PROGRAM)
+
+CC = gcc
+CFLAGS = -Wall#-Wextra -Wshadow -Werror -D_XOPEN_SOURCE=500
+
+OUTDIR = build
+
+TARGET = $(OUTDIR)/scorecard-mpi
+
+SOURCES = scorecard-mpi.c
+
+all: $(SOURCES)
+	mkdir -p $(OUTDIR)
+	$(CC) $(CFLAGS) $(SOURCES) -o $(TARGET)
 
 clean:
-	/bin/rm -f $(OBJS) $(PROGRAM)
+	rm -f *.o *.exe *.out
