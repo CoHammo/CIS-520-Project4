@@ -28,7 +28,7 @@ int main()
 
 // Read in the lines from the data file
 
-   fd = fopen( "wiki_dump.txt", "r" );
+   fd = fopen( "../wiki_dump.txt", "r" );
    for ( i = 0; i < maxlines; i++ )  {
       err = fscanf( fd, "%[^\n]\n", line);
       if( err == EOF ) break;

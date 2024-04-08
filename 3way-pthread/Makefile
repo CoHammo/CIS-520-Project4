@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -Wshadow -Werror -D_XOPEN_SOURCE=500
+CFLAGS = -g -Wall -Wextra -Wshadow #-Werror -D_XOPEN_SOURCE=500
 
 OUTDIR = build
 
