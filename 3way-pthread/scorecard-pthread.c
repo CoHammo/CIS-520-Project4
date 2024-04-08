@@ -5,7 +5,7 @@
 #include <string.h>
 #include <sys/stat.h>
 
-#define NUM_LINES 1000001   // Reads up to 1 million lines
+#define NUM_LINES 1000000   // Reads up to 1 million lines
 #define LINE_SIZE 2001      // Lines up to 2 thousand characters long
 
 /**
@@ -36,25 +36,21 @@ int main(int argc, char *argv[])
         perror(argv[1]);
         return -1;
     }
-
-    char *buffer = malloc(stats.st_size);
-    fread(buffer, 1, stats.st_size, file);
-    printf("successfully read file...\n");
-
-    char ch = 0;
+    
     int lineCount = 0;
-    for (int i = 0; i < stats.st_size; i++) {
+    char *maxValues = calloc(NUM_LINES, sizeof(char));
+
+    char *buffer = malloc(stats.st_size+1);
+    fread(buffer, 1, stats.st_size, file);
+    if (buffer[stats.st_size-1] != '\n') buffer[stats.st_size] = '\n';
+
+    for (int i = 0; i <= stats.st_size; i++) {
         if (buffer[i] == '\n') {
-            printf("%d: %d\n", lineCount + 1, ch);
             lineCount++;
-            ch = 0;
         }
-        if (buffer[i] > ch) ch = buffer[i];
+        if (buffer[i] > maxValues[lineCount]) maxValues[lineCount] = buffer[i];
     }
-    if (ch != '\n') {
-        printf("%d: %d\n", lineCount + 1, ch);
-        lineCount++;
-    }
+
 
     printf("Lines: %d\n", lineCount);
 }
