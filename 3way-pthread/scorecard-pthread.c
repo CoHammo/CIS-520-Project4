@@ -50,7 +50,6 @@ int main(int argc, char *argv[])
         }
         if (buffer[i] > maxValues[lineCount]) maxValues[lineCount] = buffer[i];
     }
-
-
+    
     printf("Lines: %d\n", lineCount);
 }
