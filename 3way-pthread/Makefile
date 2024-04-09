@@ -9,7 +9,7 @@ SOURCES = scorecard-pthread.c
 
 all: $(SOURCES)
 	mkdir -p $(OUTDIR)
-	$(CC) $(CFLAGS) $(SOURCES) -o $(TARGET)
+	$(CC) $(CFLAGS) $(SOURCES) -o $(TARGET) -lpthread
 
 clean:
 	rm -f *.o *.exe *.out
