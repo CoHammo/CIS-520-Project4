@@ -2,10 +2,18 @@
 #SBATCH --job-name=16thread
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=16
-#SBATCH --mem=2G
+#SBATCH --mem=3G
 #SBATCH --nodes=1
-#SBATCH --time=00:05:00
+#SBATCH --time=00:10:00
 #SBATCH --constraint=moles
-#SBATCH --output=16thread.out
+#SBATCH --output=results/16thread.out
 
-time build/scorecard-pthread ~dan/625/wiki_dump.txt 16
+../../hyperfine '../build/scorecard-pthread ~dan/625/wiki_dump.txt 16' --warmup 2 --runs 10 --export-json results/16thread-1.json
+../../hyperfine '../build/scorecard-pthread ~dan/625/wiki_dump.txt 16' --warmup 2 --runs 10 --export-json results/16thread-2.json
+../../hyperfine '../build/scorecard-pthread ~dan/625/wiki_dump.txt 16' --warmup 2 --runs 10 --export-json results/16thread-3.json
+
+/usr/bin/time -f 'Run 1: %M Bytes Used' ../build/scorecard-pthread ~dan/625/wiki_dump.txt 16 | grep 'Bytes Used'
+/usr/bin/time -f 'Run 2: %M Bytes Used' ../build/scorecard-pthread ~dan/625/wiki_dump.txt 16 | grep 'Bytes Used'
+/usr/bin/time -f 'Run 3: %M Bytes Used' ../build/scorecard-pthread ~dan/625/wiki_dump.txt 16 | grep 'Bytes Used'
+/usr/bin/time -f 'Run 4: %M Bytes Used' ../build/scorecard-pthread ~dan/625/wiki_dump.txt 16 | grep 'Bytes Used'
+/usr/bin/time -f 'Run 5: %M Bytes Used' ../build/scorecard-pthread ~dan/625/wiki_dump.txt 16 | grep 'Bytes Used'
