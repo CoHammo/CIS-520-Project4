@@ -119,6 +119,7 @@ int main(int argc, char *argv[])
     // Allocate buffer and read the entire file into it
     buffer = malloc(stats.st_size+1);
     fread(buffer, 1, stats.st_size, file);
+    fclose(file);
     if (buffer[stats.st_size-1] != '\n') buffer[stats.st_size] = '\n';
 
     // Create threads with the correct info and run them
@@ -171,5 +172,11 @@ int main(int argc, char *argv[])
         printf("(%d) Line Results Size: %d\n", i, thread_info[i].resultsSize);
         printf("(%d) Lines Counted: %d\n", i, thread_info[i].linesCounted);
     }*/
+
+    free(buffer);
+    free(results);
+    for (int i = 0; i < numThreads; i++) {
+        free(thread_info[i].results);
+    }
 }
 
