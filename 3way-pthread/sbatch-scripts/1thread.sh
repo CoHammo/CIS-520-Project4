@@ -8,9 +8,7 @@
 #SBATCH --constraint=moles
 #SBATCH --output=results/1thread.out
 
-../../hyperfine '../build/scorecard-pthread ~dan/625/wiki_dump.txt 1' --warmup 2 --runs 10 --export-json results/1thread-1.json
-../../hyperfine '../build/scorecard-pthread ~dan/625/wiki_dump.txt 1' --warmup 2 --runs 10 --export-json results/1thread-2.json
-../../hyperfine '../build/scorecard-pthread ~dan/625/wiki_dump.txt 1' --warmup 2 --runs 10 --export-json results/1thread-3.json
+../../hyperfine '../build/scorecard-pthread ~dan/625/wiki_dump.txt 1' --warmup 5 --runs 40 --export-json results/1thread.json
 
 /usr/bin/time -f 'Run 1: %M Bytes Used' ../build/scorecard-pthread ~dan/625/wiki_dump.txt 1 | grep 'Bytes Used'
 /usr/bin/time -f 'Run 2: %M Bytes Used' ../build/scorecard-pthread ~dan/625/wiki_dump.txt 1 | grep 'Bytes Used'
