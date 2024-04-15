@@ -10,23 +10,33 @@
 #define THREAD_RESULTS_START_SIZE 5000
 #define LINE_STRING_SIZE 13
 
-// Struct to store thread communication info
+// Struct to store thread info
 typedef struct {
-    int index;
-    int start;
-    int end;
-    int bufferLength;
-    int linesCounted;
-    int resultsSize;
-    char *buffer;
-    char *results;
-    bool reallocFail;
+    int index; // used to keep track of which thread has done work
+    int start; // where the thread should start reading from the buffer
+    int end; // where thre thread should stop reading from the buffer
+    int bufferLength; // the length of the buffer to read from
+    int linesCounted; // stores how many lines the thread counted
+    int resultsSize; // initial allocation size of the results buffer
+    char *buffer; // pointer to the buffer to read from
+    char *results; // results buffer stores the highest ASCII value from each line the thread reads from
+    bool allocFail; // whether allocation of the results buffer failed for the thread
 } thread_info_t;
 
+
+/// @brief Counts the highest ASCII value in each line of a string between the given indices, starting at the next newline.
+/// To be used with pthreads.
+/// @param args Expects a pointer to a thread_info_t struct which stores a buffer to read lines from and other
+/// information needed to know where to start and stop reading from.
+/// @return NULL
 void *readLines(void *args) {
     thread_info_t *data = (thread_info_t *)args;
     data->results = calloc(data->resultsSize, sizeof(char)); // allocates results
-    data->reallocFail = false;
+    if (data->results == NULL) {
+        data->allocFail = true;
+        return NULL;
+    }
+    data->allocFail = false;
 
     // Seeks the correct start location
     if (data->index != 0) {
@@ -48,9 +58,9 @@ void *readLines(void *args) {
         // Checks if the results buffer needs more memory allocated
         if (data->linesCounted == data->resultsSize) {
             data->resultsSize *= 2;
-            data->results = realloc(data->results, data->resultsSize);
+            data->results = realloc(data->results, data->resultsSize); // reallocated results buffer if needed
             if (data->results == NULL) {
-                data->reallocFail = true;
+                data->allocFail = true;
                 return NULL;
             }
         }
@@ -71,7 +81,7 @@ void *readLines(void *args) {
 
 int main(int argc, char *argv[])
 {
-    // Error checking for correct number of arguments given
+    // Error checking for correct number of arguments
     if (argc < 2) {
         printf("Must give a filename and number of threads to use\n");
         return -1;
@@ -104,7 +114,7 @@ int main(int argc, char *argv[])
         perror("stat");
         return -1;
     }
-    printf("%ld bytes\n\n", stats.st_size);
+    printf("%ld bytes read from file\n\n", stats.st_size);
 
     // Size of chunks that will be divided among the threads
     divide = stats.st_size / numThreads;
@@ -143,6 +153,11 @@ int main(int argc, char *argv[])
     for (int i = 0; i < numThreads; i++) {
         if (pthread_join(threads[i], NULL)) {
             perror("Thread");
+            return 1;
+        }
+
+        if (thread_info[i].allocFail) {
+            printf("Could not allocate thread %d results", i);
             return 1;
         }
         
