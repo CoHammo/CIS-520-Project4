@@ -1,6 +1,5 @@
 #!/bin/sh
 
-# Script to easily run the program on Beocat. (Not Done)
 # Run the program with: build/scorecard-pthread [file] [number of threads]
 
 cd sbatch-scripts
@@ -12,3 +11,4 @@ sbatch 8thread.sh
 sbatch 16thread.sh
 sbatch 20thread.sh
 sbatch 30thread.sh
+sbatch 40thread.sh
