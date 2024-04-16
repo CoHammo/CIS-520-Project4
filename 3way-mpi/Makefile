@@ -35,7 +35,7 @@
 #clean:
 #	/bin/rm -f $(OBJS) $(PROGRAM)
 
-CC = gcc
+CC = mpicc
 CFLAGS = -Wall -Wextra -Wshadow #-Werror -D_XOPEN_SOURCE=500
 
 OUTDIR = build
