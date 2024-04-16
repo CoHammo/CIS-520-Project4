@@ -2,7 +2,7 @@
 #SBATCH --job-name=16thread
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=16
-#SBATCH --mem-per-cpu=1G
+#SBATCH --mem-per-cpu=512M
 #SBATCH --nodes=1
 #SBATCH --time=00:15:00
 #SBATCH --constraint=moles

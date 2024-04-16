@@ -1,14 +1,13 @@
 #!/bin/bash
 #SBATCH --job-name=30thread
 #SBATCH --ntasks=30
-##SBATCH --cpus-per-task=30
-#SBATCH --mem-per-cpu=1G
+#SBATCH --mem-per-cpu=512M
 #SBATCH --nodes=2
 #SBATCH --time=00:15:00
 #SBATCH --constraint=moles
 #SBATCH --output=results/30thread.out
 
-../../hyperfine '../build/scorecard-pthread ~dan/625/wiki_dump.txt 20' --warmup 2 --runs 50 --export-json results/30thread.json
+../../hyperfine '../build/scorecard-pthread ~dan/625/wiki_dump.txt 30' --warmup 2 --runs 50 --export-json results/30thread.json
 
 /usr/bin/time -f 'Run 1: %M Bytes Used' ../build/scorecard-pthread ~dan/625/wiki_dump.txt 30 | grep 'Bytes Used'
 /usr/bin/time -f 'Run 2: %M Bytes Used' ../build/scorecard-pthread ~dan/625/wiki_dump.txt 30 | grep 'Bytes Used'
