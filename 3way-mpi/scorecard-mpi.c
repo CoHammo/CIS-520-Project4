@@ -82,17 +82,13 @@ int main(int argc, char *argv[]) {
     MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-    printf("(r=%d) (n=%d)", rank, num_procs);
+    printf("(r=%d) (n=%d)\n", rank, num_procs);
     MPI_Finalize();
 
     /*
     // Error checking for correct number of arguments
     if (argc < 2) {
         printf("Must give a filename and number of threads to use\n");
-        return -1;
-    }
-    else if (argc < 3) {
-        printf("Must give number of threads to use\n");
         return -1;
     }
 

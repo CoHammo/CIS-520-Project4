@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Run the program with: build/scorecard-mpi [file] [number of threads]
+# Run the program with: mpirun -np [number of threads] build/scorecard-mpi [file]
 
 cd sbatch-scripts
 
