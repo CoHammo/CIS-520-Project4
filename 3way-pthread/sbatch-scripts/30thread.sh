@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --job-name=30thread
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=30
-#SBATCH --mem=3G
+#SBATCH --ntasks=30
+##SBATCH --cpus-per-task=30
+#SBATCH --mem-per-cpu=1G
 #SBATCH --nodes=2
 #SBATCH --time=00:15:00
 #SBATCH --constraint=moles
