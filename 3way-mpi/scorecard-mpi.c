@@ -83,12 +83,12 @@ int main(int argc, char *argv[]) {
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
     printf("(r=%d) (n=%d)\n", rank, num_procs);
-    MPI_Finalize();
+    
 
-    /*
+    
     // Error checking for correct number of arguments
     if (argc < 2) {
-        printf("Must give a filename and number of threads to use\n");
+        printf("Must give a filename to use\n");
         return -1;
     }
 
@@ -99,16 +99,6 @@ int main(int argc, char *argv[]) {
     int maxValuesIndex = 0;
     char *results = NULL;
     char *buffer = NULL;
-
-    // Get number of threads requested by user
-    sscanf(argv[2], "%d", &numThreads);
-    if (numThreads < 1) {
-        printf("Cannot use less than 1 thread\n");
-        return 1;
-    }
-
-    thread_info_t thread_info[numThreads];
-    pthread_t threads[numThreads];
 
     // Get stats of the given file, needed to see how big the file is
     struct stat stats;
@@ -133,5 +123,5 @@ int main(int argc, char *argv[]) {
     fread(buffer, 1, stats.st_size, file);
     fclose(file);
     if (buffer[stats.st_size-1] != '\n') buffer[stats.st_size] = '\n';
-    */
+    MPI_Finalize();
 }
