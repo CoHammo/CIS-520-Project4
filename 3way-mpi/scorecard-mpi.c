@@ -92,19 +92,19 @@ int main(int argc, char *argv[]) {
     MPI_Comm_size(MPI_COMM_WORLD, &numThreads);
     MPI_Comm_rank(MPI_COMM_WORLD, &(thread_info.index));
 
+    // Get file stats
+    struct stat stats;
+    if (stat(argv[1], &stats) == -1) {
+        perror("stat");
+        return -1;
+    }
+    char *mainBuffer = malloc(stats.st_size+1);
+
+    // Size of chunks that will be divided among the threads
+    thread_info.bufferLength = stats.st_size;
+    divide = thread_info.bufferLength / numThreads;
+
     if (thread_info.index == 0) {
-
-        // Get file stats
-        struct stat stats;
-        if (stat(argv[1], &stats) == -1) {
-            perror("stat");
-            return -1;
-        }
-        printf("%ld bytes read from file\n", stats.st_size);
-
-        // Size of chunks that will be divided among the threads
-        thread_info.bufferLength = stats.st_size;
-        divide = thread_info.bufferLength / numThreads;
 
         // Open the given file
         FILE *file = fopen(argv[1], "r");
@@ -112,9 +112,9 @@ int main(int argc, char *argv[]) {
             perror(argv[1]);
             return -1;
         }
+        printf("Opened file\n");
 
         // Read the file into a buffer
-        char *mainBuffer = malloc(stats.st_size+1);
         if (fread(mainBuffer, 1, stats.st_size, file) < 1) {
             printf("Unable to read file: %s\n", argv[1]);
             return 1;
@@ -122,9 +122,18 @@ int main(int argc, char *argv[]) {
         fclose(file);
         if (thread_info.buffer[stats.st_size-1] != '\n') thread_info.buffer[stats.st_size] = '\n';
 
-        MPI_Bcast(mainBuffer, stats.st_size+1, MPI_CHAR, 0, MPI_COMM_WORLD);
+        printf("Read file\n");
     }
 
+    // printf("About to get data\n");
+    // MPI_Barrier(MPI_COMM_WORLD);
+    // MPI_Bcast(mainBuffer, stats.st_size, MPI_CHAR, 0, MPI_COMM_WORLD);
+    // printf("Received Data");
+    // printf("%d: %s\n", thread_info.index, mainBuffer);
+
+    MPI_Finalize();
+
+/*
     thread_info.resultsSize = THREAD_RESULTS_START_SIZE;
     thread_info.linesCounted = 0;
     thread_info.start = thread_info.index * divide;
@@ -162,5 +171,5 @@ int main(int argc, char *argv[]) {
     free(results);
     for (int i = 0; i < numThreads; i++) {
         free(thread_info.results);
-    }
+    }*/
 }
