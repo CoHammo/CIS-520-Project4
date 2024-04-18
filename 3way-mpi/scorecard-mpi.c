@@ -8,6 +8,9 @@
 #include <pthread.h>
 #include <stdbool.h>
 
+#define THREAD_RESULTS_START_SIZE 5000
+#define LINE_STRING_SIZE 13
+
 // Struct to store thread info
 typedef struct {
     int index; // used to keep track of which thread has done work
@@ -72,56 +75,92 @@ void *readLines(void *args) {
 }
 
 
-
 int main(int argc, char *argv[]) {
-
-    int num_procs;
-    int rank;
-
-    MPI_Init(&argc, &argv);
-    MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-
-    printf("(r=%d) (n=%d)\n", rank, num_procs);
-    
-
-    
     // Error checking for correct number of arguments
     if (argc < 2) {
         printf("Must give a filename to use\n");
         return -1;
     }
 
-
-    int numThreads;
-    int divide;
+    int numThreads, divide;
     int lineCount = 0;
     int maxValuesIndex = 0;
     char *results = NULL;
-    char *buffer = NULL;
+    thread_info_t thread_info;
 
-    // Get stats of the given file, needed to see how big the file is
-    struct stat stats;
-    if (stat(argv[1], &stats) == -1) {
-        perror("stat");
-        return -1;
+    MPI_Init(&argc, &argv);
+    MPI_Comm_size(MPI_COMM_WORLD, &numThreads);
+    MPI_Comm_rank(MPI_COMM_WORLD, &(thread_info.index));
+
+    if (thread_info.index == 0) {
+
+        // Get file stats
+        struct stat stats;
+        if (stat(argv[1], &stats) == -1) {
+            perror("stat");
+            return -1;
+        }
+        printf("%ld bytes read from file\n", stats.st_size);
+
+        // Size of chunks that will be divided among the threads
+        thread_info.bufferLength = stats.st_size;
+        divide = thread_info.bufferLength / numThreads;
+
+        // Open the given file
+        FILE *file = fopen(argv[1], "r");
+        if (file == NULL) {
+            perror(argv[1]);
+            return -1;
+        }
+
+        // Read the file into a buffer
+        char *mainBuffer = malloc(stats.st_size+1);
+        if (fread(mainBuffer, 1, stats.st_size, file) < 1) {
+            printf("Unable to read file: %s\n", argv[1]);
+            return 1;
+        }
+        fclose(file);
+        if (thread_info.buffer[stats.st_size-1] != '\n') thread_info.buffer[stats.st_size] = '\n';
+
+        MPI_Bcast(mainBuffer, stats.st_size+1, MPI_CHAR, 0, MPI_COMM_WORLD);
     }
-    printf("%ld bytes read from file\n\n", stats.st_size);
 
-    // Size of chunks that will be divided among the threads
-    divide = stats.st_size / numThreads;
+    thread_info.resultsSize = THREAD_RESULTS_START_SIZE;
+    thread_info.linesCounted = 0;
+    thread_info.start = thread_info.index * divide;
+    if (thread_info.index < numThreads - 1) thread_info.end = divide + thread_info.start;
+    else thread_info.end = thread_info.bufferLength;
 
-    // Open the given file
-    FILE *file = fopen(argv[1], "r");
-    if (file == NULL) {
-        perror(argv[1]);
-        return -1;
-    }
+    readLines(&thread_info);
 
-    // Allocate buffer and read the entire file into it
-    buffer = malloc(stats.st_size+1);
-    fread(buffer, 1, stats.st_size, file);
-    fclose(file);
-    if (buffer[stats.st_size-1] != '\n') buffer[stats.st_size] = '\n';
     MPI_Finalize();
+
+    for (int i = 0; i < 1; i++) {
+        if (thread_info.allocFail) {
+            printf("Could not allocate thread %d results\n", i);
+            return 1;
+        }
+        
+        // Allocates results buffer based on lineCount
+        results = realloc(results, (lineCount + thread_info.linesCounted) * LINE_STRING_SIZE);
+        if (results == NULL) {
+            printf("Could not allocate results\n");
+            return 1;
+        }
+
+        // Gets the results from each thread and formats them into a string to eventually print
+        for (int j = 0; j < thread_info.linesCounted; j++) {
+            int index = (j + lineCount);
+            maxValuesIndex += snprintf(&(results[maxValuesIndex]), LINE_STRING_SIZE, "%d: %d\n", index, thread_info.results[j]);
+        }
+        lineCount += thread_info.linesCounted;
+    }
+
+    printf("%s", results);
+
+    free(thread_info.buffer);
+    free(results);
+    for (int i = 0; i < numThreads; i++) {
+        free(thread_info.results);
+    }
 }

@@ -48,5 +48,22 @@ all: $(SOURCES)
 	mkdir -p $(OUTDIR)
 	$(CC) $(CFLAGS) $(SOURCES) -o $(TARGET)
 
+# For compiling on a local machine with mpich installed
+LOCALCC = /usr/lib64/mpich/bin/mpicc
+local: $(SOURCES)
+	mkdir -p $(OUTDIR)
+	$(LOCALCC) $(CFLAGS) $(SOURCES) -o $(TARGET)
+
+run:
+	cd sbatch-scripts
+	sbatch 1thread.sh
+	sbatch 2thread.sh
+	sbatch 4thread.sh
+	sbatch 8thread.sh
+	sbatch 16thread.sh
+	sbatch 20thread.sh
+	sbatch 30thread.sh
+	sbatch 40thread.sh
+
 clean:
 	rm -f *.o *.exe *.out
