@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=40thread
 #SBATCH --ntasks=40
-#SBATCH --mem-per-cpu=256M
+#SBATCH --mem-per-cpu=512M
 #SBATCH --nodes=2
 #SBATCH --time=00:15:00
 #SBATCH --constraint=moles

@@ -55,15 +55,14 @@ local: $(SOURCES)
 	$(LOCALCC) $(CFLAGS) $(SOURCES) -o $(TARGET)
 
 run:
-	cd sbatch-scripts
-	sbatch 1thread.sh
-	sbatch 2thread.sh
-	sbatch 4thread.sh
-	sbatch 8thread.sh
-	sbatch 16thread.sh
-	sbatch 20thread.sh
-	sbatch 30thread.sh
-	sbatch 40thread.sh
+	cd sbatch-scripts && sbatch 1thread.sh
+	cd sbatch-scripts && sbatch 2thread.sh
+	cd sbatch-scripts && sbatch 4thread.sh
+	cd sbatch-scripts && sbatch 8thread.sh
+	cd sbatch-scripts && sbatch 16thread.sh
+	cd sbatch-scripts && sbatch 20thread.sh
+	cd sbatch-scripts && sbatch 30thread.sh
+	cd sbatch-scripts && sbatch 40thread.sh
 
 clean:
 	rm -f *.o *.exe *.out

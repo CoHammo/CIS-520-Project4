@@ -1,9 +1,9 @@
 Benchmark 1: ../build/scorecard-pthread ~dan/625/wiki_dump.txt 16
-  Time (mean ± σ):      1.288 s ±  0.034 s    [User: 8.139 s, System: 0.664 s]
-  Range (min … max):    1.247 s …  1.383 s    40 runs
+  Time (mean ± σ):      1.391 s ±  0.050 s    [User: 8.211 s, System: 0.749 s]
+  Range (min … max):    1.298 s …  1.575 s    50 runs
  
-Run 1: 1682704 Bytes Used
-Run 2: 1682720 Bytes Used
-Run 3: 1682720 Bytes Used
-Run 4: 1683296 Bytes Used
-Run 5: 1682720 Bytes Used
+Run 1: 1682688 Bytes Used
+Run 2: 1682676 Bytes Used
+Run 3: 1682692 Bytes Used
+Run 4: 1682692 Bytes Used
+Run 5: 1682676 Bytes Used
