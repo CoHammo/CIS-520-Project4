@@ -1,5 +1,6 @@
 CC = gcc
 CFLAGS = -g -Wall -Wextra -Wshadow #-Werror -D_XOPEN_SOURCE=500
+# Look into performance measurements by compiling for gprof use
 
 OUTDIR = build
 
