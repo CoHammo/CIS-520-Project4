@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=2thread
+#SBATCH --job-name=2thread-openmp
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=2
 #SBATCH --mem-per-cpu=2G

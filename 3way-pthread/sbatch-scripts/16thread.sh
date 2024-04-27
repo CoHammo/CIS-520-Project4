@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=16thread
+#SBATCH --job-name=16thread-pthread
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=16
 #SBATCH --mem-per-cpu=512M

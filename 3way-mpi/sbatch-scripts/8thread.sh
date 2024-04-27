@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=8thread
+#SBATCH --job-name=8thread-mpi
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem-per-cpu=512M

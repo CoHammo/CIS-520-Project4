@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=30thread
+#SBATCH --job-name=30thread-pthread
 #SBATCH --ntasks=30
 #SBATCH --mem-per-cpu=512M
 #SBATCH --nodes=2

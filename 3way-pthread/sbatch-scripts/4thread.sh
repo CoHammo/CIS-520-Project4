@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=4thread
+#SBATCH --job-name=4thread-pthread
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4
 #SBATCH --mem-per-cpu=1G
