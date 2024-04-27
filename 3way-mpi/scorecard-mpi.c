@@ -76,21 +76,24 @@ void *readLines(void *args) {
 
 
 int main(int argc, char *argv[]) {
-    // Error checking for correct number of arguments
-    if (argc < 2) {
-        printf("Must give a filename to use\n");
-        return -1;
-    }
 
     int numThreads, divide;
     int lineCount = 0;
-    int maxValuesIndex = 0;
-    char *results = NULL;
+    int resultsIndex = 0;
+    char *fullResults = NULL;
     thread_info_t thread_info;
 
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &numThreads);
     MPI_Comm_rank(MPI_COMM_WORLD, &(thread_info.index));
+
+    // Error checking for correct number of arguments
+    if (argc < 2) {
+        if (thread_info.index == 0) {
+            printf("Must give a filename to use\n");
+        }
+        return -1;
+    }
 
     // Get file stats
     struct stat stats;
@@ -98,7 +101,7 @@ int main(int argc, char *argv[]) {
         perror("stat");
         return -1;
     }
-    char *mainBuffer = malloc(stats.st_size+1);
+    thread_info.buffer = malloc(stats.st_size + 1);
 
     // Size of chunks that will be divided among the threads
     thread_info.bufferLength = stats.st_size;
@@ -114,85 +117,62 @@ int main(int argc, char *argv[]) {
         }
 
         // Read the file into a buffer
-        if (fread(mainBuffer, 1, stats.st_size, file) < 1) {
+        if (fread(thread_info.buffer, 1, stats.st_size, file) < 1) {
             printf("Unable to read file: %s\n", argv[1]);
             return 1;
         }
         fclose(file);
-        if (mainBuffer[stats.st_size-1] != '\n') mainBuffer[stats.st_size] = '\n';
+        if (thread_info.buffer[stats.st_size-1] != '\n') thread_info.buffer[stats.st_size] = '\n';
     }
 
     MPI_Barrier(MPI_COMM_WORLD);
-    MPI_Bcast(mainBuffer, stats.st_size, MPI_CHAR, 0, MPI_COMM_WORLD);
+    MPI_Bcast(thread_info.buffer, stats.st_size + 1, MPI_CHAR, 0, MPI_COMM_WORLD);
 
+    // Fill the thread_info struct with info for the readLines method
     thread_info.resultsSize = THREAD_RESULTS_START_SIZE;
     thread_info.linesCounted = 0;
     thread_info.start = thread_info.index * divide;
     if (thread_info.index < numThreads - 1) thread_info.end = divide + thread_info.start;
     else thread_info.end = thread_info.bufferLength;
-    thread_info.buffer = mainBuffer;
 
     readLines(&thread_info);
 
-    if (thread_info.index != 0) {
-        MPI_Send(&(thread_info.linesCounted), 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
-        printf("%d: Sent 0\n", thread_info.index);
-        MPI_Send(thread_info.results, thread_info.linesCounted, MPI_CHAR, 0, 0, MPI_COMM_WORLD);
-        printf("%d: Sent 1\n", thread_info.index);
-        MPI_Send(&(thread_info.allocFail), 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
-        printf("%d: Sent 2\n", thread_info.index);
+    // If this is not the first thread, receive the total line count so far from the previous thread
+    if (numThreads > 1 && thread_info.index > 0) {
+        MPI_Recv(&lineCount, 1, MPI_INT, thread_info.index - 1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
     }
 
-    MPI_Barrier(MPI_COMM_WORLD);
-
-    if (thread_info.index == 0) {
-        thread_info_t allData[numThreads];
-        for (int i = 1; i < numThreads; i++) {
-            printf("%d\n", i);
-            int size = 0;
-            MPI_Recv(&size, 1, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-            printf("%d: Received 0\n", thread_info.index);
-            allData[i].results = calloc(size, sizeof(char));
-            MPI_Recv(allData[i].results, allData[i].linesCounted, MPI_CHAR, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-            printf("%d: Received 1\n", thread_info.index);
-            MPI_Recv(&(allData[i].allocFail), 1, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-            printf("%d: Received 2\n", thread_info.index);
-        }
-        allData[0].results = calloc(thread_info.linesCounted, sizeof(char));
-        allData[0].results = thread_info.results;
-        allData[0].linesCounted = thread_info.linesCounted;
-        allData[0].allocFail = thread_info.allocFail;
-
-        for (int i = 0; i < numThreads; i++) {
-            if (allData[i].allocFail == 1) {
-                printf("Could not allocate thread %d results\n", i);
-                return 1;
-            }
-        
-            // Allocates results buffer based on lineCount
-            results = realloc(results, (lineCount + allData[i].linesCounted) * LINE_STRING_SIZE);
-            if (results == NULL) {
-                printf("Could not allocate results\n");
-                return 1;
-            }
-
-            // Gets the results from each thread and formats them into a string to eventually print
-            for (int j = 0; j < allData[i].linesCounted; j++) {
-                int index = (j + lineCount);
-                maxValuesIndex += snprintf(&(results[maxValuesIndex]), LINE_STRING_SIZE, "%d: %d\n", index, allData[i].results[j]);
-            }
-            lineCount += allData[i].linesCounted;
-        }
-
-        printf("%s", results);
+    // Check for allocation failure
+    if (thread_info.allocFail) {
+        printf("Could not allocate thread %d initial results", thread_info.index);
+        return 1;
     }
-    
 
-    /*free(thread_info.buffer);
-    free(results);
-    for (int i = 0; i < numThreads; i++) {
-        free(thread_info.results);
-    }*/
+    // Allocate buffer for results and check for failure
+    fullResults = malloc((thread_info.linesCounted) * LINE_STRING_SIZE);
+    if (fullResults == NULL) {
+        printf("Could not allocate thread %d full results", thread_info.index);
+        return 1;
+    }
+
+    // Create the full results string for this thread
+    int index = lineCount;
+    for (int i = 0; i < thread_info.linesCounted; i++) {
+        resultsIndex += snprintf(&(fullResults[resultsIndex]), LINE_STRING_SIZE, "%d: %d\n", index, thread_info.results[i]);
+        index++;
+    }
+
+    printf("%s", fullResults); // Print results for this thread
+
+    // If this is not the last thread, send the line count so far to the next thread
+    if (numThreads > 1 && thread_info.index < numThreads - 1) {
+        int totalLineCount = thread_info.linesCounted + lineCount;
+        MPI_Send(&totalLineCount, 1, MPI_INT, thread_info.index + 1, 0, MPI_COMM_WORLD);
+    }
+
+    free(fullResults);
+    free(thread_info.buffer);
+    free(thread_info.results);
 
     MPI_Finalize();
 }
