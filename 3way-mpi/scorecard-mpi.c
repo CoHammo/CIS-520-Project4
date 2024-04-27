@@ -143,11 +143,15 @@ int main(int argc, char *argv[]) {
         printf("%d: Sent 2\n", thread_info.index);
     }
 
+    MPI_Barrier(MPI_COMM_WORLD);
+
     if (thread_info.index == 0) {
         thread_info_t allData[numThreads];
         for (int i = 1; i < numThreads; i++) {
+            printf("%d\n", i);
             int size = 0;
             MPI_Recv(&size, 1, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+            printf("%d: Received 0\n", thread_info.index);
             allData[i].results = calloc(size, sizeof(char));
             MPI_Recv(allData[i].results, allData[i].linesCounted, MPI_CHAR, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
             printf("%d: Received 1\n", thread_info.index);
