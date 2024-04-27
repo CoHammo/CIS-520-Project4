@@ -1,9 +1,8 @@
 #!/bin/bash
 #SBATCH --job-name=16thread-mpi
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=16
-#SBATCH --mem-per-cpu=512M
 #SBATCH --nodes=1
+#SBATCH --ntasks=16
+#SBATCH --mem=4G
 #SBATCH --time=00:15:00
 #SBATCH --constraint=moles
 #SBATCH --output=results/16thread.out

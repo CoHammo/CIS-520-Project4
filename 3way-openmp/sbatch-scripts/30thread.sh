@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --job-name=30thread-openmp
-#SBATCH --ntasks=30
-#SBATCH --mem-per-cpu=512M
 #SBATCH --nodes=2
+#SBATCH --ntasks=30
+#SBATCH --mem=4G
 #SBATCH --time=00:15:00
 #SBATCH --constraint=moles
 #SBATCH --output=results/30thread.out

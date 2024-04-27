@@ -1,9 +1,8 @@
 #!/bin/bash
 #SBATCH --job-name=8thread-pthread
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=8
-#SBATCH --mem-per-cpu=512M
 #SBATCH --nodes=1
+#SBATCH --ntasks=8
+#SBATCH --mem=4G
 #SBATCH --time=00:15:00
 #SBATCH --constraint=moles
 #SBATCH --output=results/8thread.out

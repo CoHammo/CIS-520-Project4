@@ -1,9 +1,8 @@
 #!/bin/bash
 #SBATCH --job-name=1thread-openmp
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=1
-#SBATCH --mem-per-cpu=4G
 #SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --mem=4G
 #SBATCH --time=00:15:00
 #SBATCH --constraint=moles
 #SBATCH --output=results/1thread.out

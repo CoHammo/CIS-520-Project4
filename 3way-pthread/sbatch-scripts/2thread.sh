@@ -1,9 +1,8 @@
 #!/bin/bash
 #SBATCH --job-name=2thread-pthread
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=2
-#SBATCH --mem-per-cpu=2G
 #SBATCH --nodes=1
+#SBATCH --ntasks=2
+#SBATCH --mem=4G
 #SBATCH --time=00:15:00
 #SBATCH --constraint=moles
 #SBATCH --output=results/2thread.out
