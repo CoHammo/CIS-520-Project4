@@ -1,17 +1,11 @@
 Benchmark 1: ../build/scorecard-openmp ~dan/625/wiki_dump.txt 4
-Error: Command terminated with non-zero exit code: 127. Use the '-i'/'--ignore-failure' option if you want to ignore this. Alternatively, use the '--show-output' option to debug what went wrong.
-/usr/bin/time: cannot run ../build/scorecard-openmp: No such file or directory
-Command exited with non-zero status 127
-Run 1: 908 Bytes Used
-/usr/bin/time: cannot run ../build/scorecard-openmp: No such file or directory
-Command exited with non-zero status 127
-Run 2: 908 Bytes Used
-/usr/bin/time: cannot run ../build/scorecard-openmp: No such file or directory
-Command exited with non-zero status 127
-Run 3: 908 Bytes Used
-/usr/bin/time: cannot run ../build/scorecard-openmp: No such file or directory
-Command exited with non-zero status 127
-Run 4: 908 Bytes Used
-/usr/bin/time: cannot run ../build/scorecard-openmp: No such file or directory
-Command exited with non-zero status 127
-Run 5: 908 Bytes Used
+  Time (mean ± σ):      2.682 s ±  0.066 s    [User: 7.456 s, System: 0.673 s]
+  Range (min … max):    2.632 s …  3.106 s    50 runs
+ 
+  Warning: Statistical outliers were detected. Consider re-running this benchmark on a quiet system without any interferences from other programs. It might help to use the '--warmup' or '--prepare' options.
+ 
+Run 1: 1683968 Bytes Used
+Run 2: 1683976 Bytes Used
+Run 3: 1683240 Bytes Used
+Run 4: 1682968 Bytes Used
+Run 5: 1683292 Bytes Used

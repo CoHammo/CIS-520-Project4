@@ -1,0 +1,9 @@
+Benchmark 1: ../build/scorecard-openmp ~dan/625/wiki_dump.txt 20
+  Time (mean ± σ):      1.537 s ±  0.264 s    [User: 8.303 s, System: 0.970 s]
+  Range (min … max):    1.241 s …  2.005 s    50 runs
+ 
+Run 1: 1682056 Bytes Used
+Run 2: 1682092 Bytes Used
+Run 3: 1682092 Bytes Used
+Run 4: 1681856 Bytes Used
+Run 5: 1682092 Bytes Used
