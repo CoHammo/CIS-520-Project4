@@ -2,7 +2,7 @@
 #SBATCH --job-name=16thread-openmp
 #SBATCH --nodes=1
 #SBATCH --ntasks=16
-#SBATCH --mem=4G
+#SBATCH --mem-per-core=512M
 #SBATCH --time=00:15:00
 #SBATCH --constraint=moles
 #SBATCH --output=results/16thread.out

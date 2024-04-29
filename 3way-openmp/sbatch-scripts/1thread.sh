@@ -2,7 +2,7 @@
 #SBATCH --job-name=1thread-openmp
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --mem=4G
+#SBATCH --mem-per-core=4G
 #SBATCH --time=00:15:00
 #SBATCH --constraint=moles
 #SBATCH --output=results/1thread.out

@@ -2,7 +2,7 @@
 #SBATCH --job-name=40thread-pthread
 #SBATCH --nodes=2
 #SBATCH --ntasks=40
-#SBATCH --mem=4G
+#SBATCH --mem-per-core=512M
 #SBATCH --time=00:15:00
 #SBATCH --constraint=moles
 #SBATCH --output=results/40thread.out
