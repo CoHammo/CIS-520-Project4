@@ -2,7 +2,7 @@
 #SBATCH --job-name=8thread-mpi
 #SBATCH --nodes=1
 #SBATCH --ntasks=8
-#SBATCH --mem=4G
+#SBATCH --mem=16G
 #SBATCH --time=00:15:00
 #SBATCH --constraint=moles
 #SBATCH --output=results/8thread.out

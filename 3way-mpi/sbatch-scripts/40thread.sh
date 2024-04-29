@@ -2,7 +2,7 @@
 #SBATCH --job-name=40thread-mpi
 #SBATCH --nodes=2
 #SBATCH --ntasks=40
-#SBATCH --mem=4G
+#SBATCH --mem=16G
 #SBATCH --time=00:15:00
 #SBATCH --constraint=moles
 #SBATCH --output=results/40thread.out
