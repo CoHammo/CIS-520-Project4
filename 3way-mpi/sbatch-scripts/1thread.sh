@@ -2,7 +2,7 @@
 #SBATCH --job-name=1thread-mpi
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --mem-per-core=4G
+#SBATCH --mem-per-core=8G
 #SBATCH --time=00:30:00
 #SBATCH --constraint=moles
 #SBATCH --output=results/1thread.out
