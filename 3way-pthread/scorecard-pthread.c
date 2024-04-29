@@ -178,16 +178,6 @@ int main(int argc, char *argv[])
 
     printf("%s", results); // Print results
 
-    // Used for debugging
-    /*printf("Line Counts String Size: %d\n", lineCount*LINE_STRING_SIZE);
-    printf("Bytes Written to Line Counts String: %d\n", maxValuesIndex);
-    printf("Lines Counted: %d\n", lineCount);
-    for (int i = 0; i < numThreads; i++) {
-        if (thread_info[i].reallocFail) printf("Thread %d: Line Overflow Error\n", i);
-        printf("(%d) Line Results Size: %d\n", i, thread_info[i].resultsSize);
-        printf("(%d) Lines Counted: %d\n", i, thread_info[i].linesCounted);
-    }*/
-
     free(buffer);
     free(results);
     for (int i = 0; i < numThreads; i++) {

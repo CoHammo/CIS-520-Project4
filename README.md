@@ -1,42 +1,12 @@
-README: Parallel Processing of Wikipedia Articles on Beocat
-Overview
-This project demonstrates the use of MPI, OpenMP, and Pthread for processing a large dataset consisting of Wikipedia articles. Detailed instructions are provided below for compiling and running the project on Beocat.
+# Overview
+This program takes a file and gets the maximum ASCII value from each line in the file using a given number of threads.
+There are pthread, mpi, and openmp implentations of the program, and they can be run with the following commands once the program is compiled:
+- pthread: scorecard-pthread \<file> \<threads>
+- mpi: mpirun -n \<threads> scorecard-mpi \<file>
+- openmp: scorecard-openmp \<file> \<threads>
 
-Prerequisites
-Before compiling and running the code, ensure you have loaded the necessary modules. These include tools for compiling (GCC, CMake) and managing parallel processes (OpenMPI, CUDA).
+# Compiling and Running
+There is a Makefile in the top level directory of this git repo that has recipes for compiling and running the program on Beocat. Run `make all` from the top level directory to compile every version of the program. Then run `make run` to run every version of the program. This will use sbatch scripts to run and benchmark each version of the program multiple times with 1, 2, 4, 8, 16, 20, and 40 threads. You can also compile and run the programs in one step with `make build-and-run`, and there are recipes to compile and run one implementation of the program at a time in the Makefile in the top level directory, as well as in Makefiles in each implementation's directory.
 
-Compiling the Code
-Load Required Modules:
-bash
-Copy code
-module load CMake/3.23.1-GCCcore-11.3.0 foss/2022a OpenMPI/4.1.4-GCC-11.3.0 CUDA/11.7.0
-Navigate to the Desired Directory:
-Choose the directory based on the parallelization technology you are testing (MPI, OpenMP, or Pthread).
-bash
-Copy code
-cd path/to/mpi_or_openmp_or_pthread_directory
-Compile the Code:
-Use the make command to compile the code. This command utilizes the Makefile provided in each directory, which contains specific build instructions.
-bash
-Copy code
-make
-Running the Code
-Test Execution:
-After compilation, you can run the tests directly from the command line or through scheduling scripts provided in the sbatch-scripts directory. Example commands are included in the Makefile, which use /usr/bin/time to measure memory usage and execution time.
-bash
-Copy code
-/usr/bin/time -f 'Run 1: %M Bytes Used' mpirun -n 4 ../build/scorecard-mpi ~dan/625/wiki_dump.txt | grep 'Bytes Used'
-Schedule Jobs on Beocat:
-For scheduling and running the jobs via SLURM, navigate to the sbatch-scripts directory and submit the job using sbatch.
-bash
-Copy code
-cd sbatch-scripts
-sbatch job_script_name.sh
-Checking Results
-Results from the scheduled jobs can be found in the results directory within the sbatch-scripts folder. Each output file is named according to the number of threads and the specific technology used.
-
-Additional Notes
-Ensure that the path to the Wikipedia dataset (~dan/625/wiki_dump.txt) is correct and accessible.
-Modify the SLURM scripts as needed to match the specific requirements of your Beocat environment.
-For more detailed information on the project setup, refer to the project documentation and source code comments.
-
+# Benchmarks
+The time the program takes to run is benchmarked with `hyperfine` when run on Beocat through the Makefile with sbatch scripts. The results of a benchmarking run are stored in `*thread.out` and `*thread.json` files in the `sbatch-scripts/results` directory of each implementation, with the star being the number of threads used for that benchmarking run.
